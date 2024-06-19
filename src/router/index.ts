@@ -3,13 +3,13 @@ import Home from '../views/Home.vue';
 import Signup from '../components/Signup.vue';
 import Login from '../components/Login.vue';
 import Register from '../components/Register.vue';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const routes = [
-  { path: '/', component: Home, meta: { requiresAuth: true } },
+  { path: '/', component: Signup },
   { path: '/signup', component: Signup },
   { path: '/login', component: Login },
-  { path: '/register', component: Register }
+  { path: '/register', component: Register },
+  { path: '/home', component: Home, meta: { requiresAuth: true } }
 ];
 
 const router = createRouter({
@@ -18,14 +18,13 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const auth = getAuth();
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const user = auth.currentUser;
+  const isAuthenticated = localStorage.getItem('token') !== null;
 
-  if (requiresAuth && !user) {
+  if (requiresAuth && !isAuthenticated) {
     next('/signup');
-  } else if (user && (to.path === '/login' || to.path === '/signup' || to.path === '/register')) {
-    next('/');
+  } else if (isAuthenticated && (to.path === '/login' || to.path === '/signup' || to.path === '/register')) {
+    next('/home');
   } else {
     next();
   }

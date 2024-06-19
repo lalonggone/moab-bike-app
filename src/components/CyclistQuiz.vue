@@ -1,6 +1,7 @@
 <template>
     <div v-if="show" class="modal">
       <div class="modal-content">
+        <button @click="closeModal">Close</button>
         <h1>Let's get to know you better!</h1>
         <form @submit.prevent="submitQuiz">
           <div v-if="step === 1" class="quiz-step">
@@ -40,6 +41,10 @@
       const type = ref('');
       const goals = ref([]);
       const auth = getAuth();
+
+      const closeModal = () => {
+        emit('close');
+      };
   
       const nextStep = () => {
         step.value++;
@@ -69,7 +74,8 @@
         type,
         goals,
         nextStep,
-        submitQuiz
+        submitQuiz,
+        closeModal
       };
     }
   });

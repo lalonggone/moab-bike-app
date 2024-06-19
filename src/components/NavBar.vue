@@ -1,33 +1,56 @@
 <template>
-    <nav>
-      <router-link to="/">Home</router-link>
-      <button @click="logout">Logout</button>
-    </nav>
-  </template>
-  
-  <script lang="ts">
-  import { defineComponent } from 'vue';
-  import { signOut } from 'firebase/auth';
-  import { auth } from '../firebaseConfig';
-  import { useRouter } from 'vue-router';
-  
-  export default defineComponent({
-    setup() {
-      const router = useRouter();
-      const logout = async () => {
-        await signOut(auth);
-        router.push('/signup');
-      };
-      return { logout };
-    }
-  });
-  </script>
-  
-  <style scoped>
-  nav {
-    display: flex;
-    gap: 1rem;
-    background-color: #f8f9fa;
-    padding: 1rem;
+  <nav>
+    <ul>
+      <li><router-link to="/home">Home</router-link></li>
+      <li><button @click="logout">Logout</button></li>
+    </ul>
+  </nav>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { useRouter } from 'vue-router';
+
+export default defineComponent({
+  setup() {
+    const router = useRouter();
+
+    const logout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      router.push('/login');
+    };
+
+    return {
+      logout
+    };
   }
-  </style>
+});
+</script>
+
+<style scoped>
+nav {
+  display: flex;
+  justify-content: space-between;
+  /* background-color: #333; */
+  color: white;
+  padding: 1rem;
+}
+
+ul {
+  list-style-type: none;
+  display: flex;
+  gap: 1rem;
+}
+
+li {
+  display: flex;
+}
+
+button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+</style>

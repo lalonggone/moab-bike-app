@@ -5,7 +5,7 @@
       <h1>Welcome to the Moab Bike Hub, {{ userName }}!</h1>
       <p>We're excited to have you here.</p>
     </div>
-    <CyclistQuiz v-if="showQuizModal" @close="closeQuizModal" />
+    <CyclistQuiz v-if="showQuizModal" :show="showQuizModal" @close="closeQuizModal" />
   </div>
 </template>
 
@@ -13,7 +13,6 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import NavBar from '../components/NavBar.vue';
 import CyclistQuiz from '../components/CyclistQuiz.vue';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 export default defineComponent({
   name: 'Home',
@@ -24,21 +23,14 @@ export default defineComponent({
   setup() {
     const isAuthenticated = ref(false);
     const userName = ref('');
-    const showQuizModal = ref(false); // Control the visibility of the quiz modal
-    const auth = getAuth();
+    const showQuizModal = ref(false);
 
     onMounted(() => {
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          isAuthenticated.value = true;
-          userName.value = user.displayName || 'User';
-          // Check if the quiz has been completed
-          // For now, we will set it to show for demonstration
-          showQuizModal.value = true; // Set this based on your logic
-        } else {
-          isAuthenticated.value = false;
-        }
-      });
+      console.log('Home component mounted');
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      isAuthenticated.value = !!localStorage.getItem('token');
+      userName.value = user.displayName || user.email || 'User';
+      showQuizModal.value = !user.quizCompleted; // Adjust based on your logic
     });
 
     const closeQuizModal = () => {

@@ -3,14 +3,14 @@
     <div class="signup-buttons">
       <button class="google-signup" @click="googleSignIn">Continue with Google</button>
       <button class="outlook-signup">Continue with Outlook</button>
+      <div class="divider">
+        <span>OR</span>
+      </div>
+      <button class="email-signup" @click="goToEmailSignup">Sign up with email</button>
+      <p class="already-account">
+        Already have an account? <router-link to="/login">Login</router-link>
+      </p>
     </div>
-    <div class="divider">
-      <span>OR</span>
-    </div>
-    <button class="email-signup" @click="goToEmailSignup">Sign up with email</button>
-    <p class="already-account">
-      Already have an account? <router-link to="/login">Login</router-link>
-    </p>
   </div>
 </template>
 
@@ -29,7 +29,10 @@ export default defineComponent({
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
         console.log('User signed in with Google:', user);
-        router.push('/');  // Navigate to home after successful sign-in
+        const token = await user.getIdToken();
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        router.push('/home');  // Navigate to home after successful sign-in
       } catch (error) {
         console.error('Error signing in with Google:', error);
       }
@@ -52,6 +55,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 400px;
   padding: 2rem;
   background-color: #f5f5f5;
   border-radius: 10px;
@@ -91,7 +95,6 @@ export default defineComponent({
 .divider span {
   flex-grow: 1;
   text-align: center;
-  border-bottom: 1px solid #ccc;
   line-height: 0.1em;
   margin: 0 1rem;
   padding: 0 1rem;

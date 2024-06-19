@@ -5,6 +5,10 @@
       <input v-model="name" placeholder="Name" required />
       <input v-model="email" placeholder="Email" required />
       <input v-model="password" type="password" placeholder="Password" required />
+      <select v-model="accountType" required>
+        <option value="individual">Individual</option>
+        <option value="organization">Organization</option>
+      </select>
       <button type="submit">Register</button>
     </form>
     <p class="login-prompt">
@@ -15,8 +19,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   setup() {
@@ -24,13 +28,15 @@ export default defineComponent({
     const name = ref('');
     const email = ref('');
     const password = ref('');
+    const accountType = ref('individual'); // Default value
 
     const register = async () => {
       try {
         const response = await axios.post('http://localhost:3000/register', {
           name: name.value,
           email: email.value,
-          password: password.value
+          password: password.value,
+          account_type: accountType.value
         });
         console.log('User registered:', response.data);
         router.push('/login');
@@ -43,6 +49,7 @@ export default defineComponent({
       name,
       email,
       password,
+      accountType,
       register
     };
   }
@@ -67,7 +74,7 @@ form {
   gap: 1rem;
 }
 
-input {
+input, select {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #ccc;
