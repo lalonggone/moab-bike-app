@@ -32,7 +32,7 @@ export default defineComponent({
         console.log('User logged in:', response.data);
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
-        router.push('/home');  // Navigate to home after successful login
+        router.push('/home');
       } catch (error) {
         console.error('Error logging in:', error);
       }
