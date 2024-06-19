@@ -19,6 +19,7 @@ import { defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../firebaseConfig';
+import axios from 'axios';
 
 export default defineComponent({
   setup() {
@@ -28,15 +29,30 @@ export default defineComponent({
       try {
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
-        console.log('User signed in with Google:', user);
         const token = await user.getIdToken();
+        console.log('Google ID Token:', token);
+
+        const response = await axios.post('http://localhost:3000/google-signin', {}, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        console.log('User signed in with Google:', response.data);
+        
+        // Store token and user in localStorage
         localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
-        router.push('/home');  // Navigate to home after successful sign-in
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+
+        router.push('/home');
       } catch (error) {
         console.error('Error signing in with Google:', error);
+        if (error.response) {
+          console.error('Axios Error Response:', error.response.data);
+        }
       }
     };
+
 
     const goToEmailSignup = () => {
       router.push('/register');
